@@ -1,5 +1,5 @@
-#App RH
+# App RH
 
-Criação de um sistema de RH com a linguagem Java e a ferramenta Spring boot
+Criação de um sistema de RH com Java e a ferramenta Spring Boot.
 
-Repositório do professor: https://gist.github.com/FilosoDev/c72272fd6772b395b1e187407e85672c 
+Repositório do professor: [Spring-Boot-tutorial-AppRh](https://github.com/FilosoDev/Spring-Boot-tutorial-AppRh)
