@@ -17,12 +17,12 @@ public class DataConfiguration {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		dataSource.setUrl("jdbc:mysql://localhost:3306/AppRH?userTimezone=true&serverTimezone=UTC");
-		dataSource.setUsername(" ");
-		dataSource.setPassword(" ");
-		return dataSource();
+		dataSource.setUsername("root");
+		dataSource.setPassword("0k@dw1n!*D3v");
+		return dataSource;
 		
 		}
-	
+	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.MYSQL);
