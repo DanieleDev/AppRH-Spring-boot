@@ -18,7 +18,7 @@ public class Vaga implements Serializable {
 	
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	private long codigo;
+	private Long codigo;
 	
 	@NotEmpty
 	private String nome;
