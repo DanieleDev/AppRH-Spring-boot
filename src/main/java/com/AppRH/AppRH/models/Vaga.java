@@ -1,6 +1,7 @@
 package com.AppRH.AppRH.models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -9,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 @Entity
@@ -20,14 +23,15 @@ public class Vaga implements Serializable {
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	private Long codigo;
 	
-	@NotEmpty
+	@NotBlank
 	private String nome;
 	
 	@NotEmpty
 	private String descricao;
 	
 	@NotEmpty
-	private String data;
+    @Future
+	private LocalDate data;
 	
 	@NotEmpty
 	private String salario;
@@ -59,11 +63,11 @@ public class Vaga implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public String getData() {
+	public @NotEmpty @Future LocalDate getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(@NotEmpty @Future LocalDate data) {
 		this.data = data;
 	}
 

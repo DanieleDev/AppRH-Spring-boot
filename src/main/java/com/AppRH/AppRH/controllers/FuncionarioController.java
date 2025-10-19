@@ -1,5 +1,7 @@
 package com.AppRH.AppRH.controllers;
 
+import javax.smartcardio.ATR;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,31 +20,120 @@ import jakarta.validation.Valid;
 
 @Controller
 public class FuncionarioController {
-	
-	@Autowired
-	private FuncionarioRepository fr;
-	
-	@Autowired
-	private DependentesRepository dr;
-	
-	//chama o forn de cadastrar funcionarios
-	@RequestMapping(value="/cadastrarFuncionario", method = RequestMethod.GET)
-	public String form() {
-		return "funcionario/formFuncionario"; 
-	}
-	
-	//cadastra funcionario
-	@RequestMapping(value = "/cadastrarFuncionario", method = RequestMethod.POST)
-	public String form(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attributes) {
-		
-		if(result.hasErrors()) {
-			attributes.addFlashAttribute("mensagem", "Verifique os campos");
-			return "redirect:/cadastrarFuncionario"; 	
-		}
-		fr.save(funcionario);
-		attributes.addFlashAttribute("mensagem", "Funcionario cadastrado com sucesso!");
-		return "redirect:/cadastrarFuncionario"; 	
-		
-	}
+
+    @Autowired
+    private FuncionarioRepository fr;
+
+    @Autowired
+    private DependentesRepository dr;
+
+    // chama o forn de cadastrar funcionarios
+    @RequestMapping(value = "/cadastrarFuncionario", method = RequestMethod.GET)
+    public String form() {
+        return "funcionario/formFuncionario";
+    }
+
+    // cadastra funcionario
+    @RequestMapping(value = "/cadastrarFuncionario", method = RequestMethod.POST)
+    public String form(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attributes) {
+
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("mensagem", "Verifique os campos");
+            return "redirect:/cadastrarFuncionario";
+        }
+        fr.save(funcionario);
+        attributes.addFlashAttribute("mensagem", "Funcionario cadastrado com sucesso!");
+        return "redirect:/cadastrarFuncionario";
+
+    }
+
+    // Listar funcionario
+    @RequestMapping("/funcionarios")
+    public ModelAndView listaFuncionarios() {
+        ModelAndView mv = new ModelAndView("funcionario/listaFuncionario");
+        Iterable<Funcionario> funcionarios = fr.findAll();
+        mv.addObject("funcionarios", funcionarios);
+        return mv;
+    }
+
+    // Listar dependentes
+    @RequestMapping(value = "/dependentes/{id}", method = RequestMethod.GET)
+    public ModelAndView dependentes(@PathVariable("id") long id) {
+        Funcionario funcionario = fr.findById(id);
+        ModelAndView mv = new ModelAndView("funcionario/dependentes");
+        mv.addObject("funcionarios", funcionario);
+
+        // lista de dependentes baseada no funcionario
+        Iterable<Dependentes> dependentes = dr.findByFuncionario(funcionario);
+        mv.addObject("dependentes", dependentes);
+
+        return mv;
+
+    }
+
+    // Adiconar dependentes
+    @RequestMapping(value = "/dependentes/{id}", method = RequestMethod.POST)
+    public String dependentesPost(@PathVariable("id") long id, Dependentes dependentes, BindingResult result,
+                                  RedirectAttributes attributes) {
+
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("mensagem", "Verifique os campos!");
+            return "redirect:/dependentes/{id}";
+        }
+
+        if (dr.findByCpf(dependentes.getCpf()) != null) {
+            attributes.addFlashAttribute("mensagem_erro", "CPF duplicado!");
+            return "redirect:/dependentes/{id}";
+        }
+
+        Funcionario funcionario = fr.findById(id);
+        dependentes.setFuncionario(funcionario);
+        dr.save(dependentes);
+        attributes.addFlashAttribute("mensagem", "Dependente adicionado com sucesso!");
+        return "redirect:/dependentes/{id}";
+
+    }
+
+    //deletar funcionario
+    @RequestMapping("/deletarFuncionario")
+    public String deletarFuncionario(long id) {
+        Funcionario funcionario = fr.findById(id);
+        fr.delete(funcionario);
+        return "redirect:/funcionarios";
+    }
+
+    // Métodos que atualizam funcionario
+    //form
+    @RequestMapping(value = "/editar-funcionario", method = RequestMethod.GET)
+    public ModelAndView editarFuncionario(long id) {
+        Funcionario funcionario = fr.findById(id);
+        ModelAndView mv = new ModelAndView("funcionario/update-funcionario");
+        mv.addObject("funcionario", funcionario);
+        return mv;
+    }
+
+    //Update funcionario
+    @RequestMapping(value = "/editar-funcionario", method = RequestMethod.POST)
+    public String updateFuncionario(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attributes) {
+        fr.save(funcionario);
+        attributes.addFlashAttribute("sucess", "Funcionário adicionado com sucesso!");
+
+        long idLong = funcionario.getId();
+        String id = "" + idLong;
+        return "redirect:/dependentes/" + id;
+    }
+
+    //Deletar dependetes
+    @RequestMapping("/deletarDependente")
+    public String deletarDependente(String cpf) {
+        Dependentes dependente = dr.findByCpf(cpf);
+
+        Funcionario funcionario = dependente.getFuncionario();
+        String codigo = "" + funcionario.getId();
+
+        dr.delete(dependente);
+        return "redirect:/dependentes/" + codigo;
+    }
+
 
 }

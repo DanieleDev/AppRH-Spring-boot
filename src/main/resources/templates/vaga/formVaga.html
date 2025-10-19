@@ -53,10 +53,13 @@
 
 		<br>
 
-		<th:block th:include="mensagemValidacao"></th:block>
+        <div th:if="${mensagem}" class="alert alert-warning">
+            <p th:text="${mensagem}"></p>
+        </div>
 
 
-		<form method="POST">
+
+        <form method="POST">
 
 
 			<div class="form-group">

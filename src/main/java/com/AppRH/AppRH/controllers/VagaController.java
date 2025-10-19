@@ -26,11 +26,12 @@ public class VagaController {
 	// CADASTRA VAGA
 	@RequestMapping(value = "/cadastrarVaga", method = RequestMethod.GET)
 	public String form() {
-		return "vaga/formVaga";
+        return "vaga/formVaga";
 	}
 
 	@RequestMapping(value = "/cadastrarVaga", method = RequestMethod.POST)
 	public String form(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes) {
+
 		if (result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem", "Verifique os campos...");
 			return "redirect:/cadastrarVaga";
@@ -41,7 +42,7 @@ public class VagaController {
 		return "redirect:/cadastrarVaga";
 	}
 
-	// LISTA VAGA
+	// Lista vagas
 
 	@RequestMapping("/vagas")
 	public ModelAndView listaVaga() {
@@ -84,7 +85,7 @@ public class VagaController {
 		
 		// RG DUPLICADO
 		if (cr.findByRg(candidato.getRg()) != null) {
-			attributes.addFlashAttribute("mensagem _erro", "RG duplicado");
+			attributes.addFlashAttribute("mensagem_erro", "RG duplicado");
 			return "redirect:/{codigo}";
 		}
 
